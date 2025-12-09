@@ -10,7 +10,6 @@ app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@assignment-10.g03zhhb.mongodb.net/?appName=assignment-10`;
 
-
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,6 +25,37 @@ app.get("/", (req, res) => {
 async function run() {
   try {
     await client.connect();
+    const database = client.db("art-works");
+    const artWorksCollection = database.collection("art-work");
+
+    // post art to DB
+    app.post("/artworks", async (req, res) => {
+      const data = req.body;
+      const date = new Date();
+      data.createdAt = date;
+      console.log(data);
+      const result = await artWorksCollection.insertOne(data);
+      res.send(result);
+    });
+
+    // get artwork in backend from db
+    app.get("/artWorks",async (req,res)=>{
+        // const result =await artWorksCollection.find().toArray();
+        // res.send(result)
+        const visibility = req.query.visibility; // e.g. ?visibility=public
+        console.log(visibility)
+        const query = {};
+
+        if (visibility) {
+          query.Visibility = visibility; // filter only if query exists
+        }
+
+        const result = await artWorksCollection.find(query).toArray();
+        res.send(result);
+    })
+
+
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
