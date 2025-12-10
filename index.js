@@ -40,8 +40,6 @@ async function run() {
 
     // get artwork in backend from db
     app.get("/artWorks", async (req, res) => {
-      // const visibility = req.query.visibility;
-      // const category =req.query.category;
       const { category, visibility } = req.query;
       console.log(visibility);
       const query = {};
@@ -54,6 +52,37 @@ async function run() {
       }
 
       const result = await artWorksCollection.find(query).toArray();
+      res.send(result);
+    });
+    // loading single data using id
+
+    app.get("/artWorks/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+
+      const query = { _id: new ObjectId(id) };
+      const result = await artWorksCollection.findOne(query);
+      res.send(result);
+    });
+    // my artwork load from database
+    app.get("/my-artworks", async (req, res) => {
+      const { email } = req.query;
+      console.log(email);
+      const query = { email: email };
+      const result = await artWorksCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // update my artworks
+    app.put("/update/:id", async (req, res) => {
+      const data = req.body;
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      const updateArt = {
+        $set: data,
+      };
+      const result = await artWorksCollection.updateOne(query, updateArt);
       res.send(result);
     });
 
