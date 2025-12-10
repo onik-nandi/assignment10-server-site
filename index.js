@@ -27,6 +27,7 @@ async function run() {
     await client.connect();
     const database = client.db("art-works");
     const artWorksCollection = database.collection("art-work");
+    const favouriteArtCollections = database.collection("favourite-art");
 
     // post art to DB
     app.post("/artworks", async (req, res) => {
@@ -108,6 +109,19 @@ async function run() {
         .limit(6)
         .toArray();
       res.send(result);
+    });
+
+    // post favourite data in DB
+
+    app.post("/favourites", async (req, res) => {
+      const data = req.body;
+      const result = await favouriteArtCollections.insertOne(data);
+      res.status(201).send(result);
+    });
+
+    app.get("/favourites", async (req, res) => {
+      const result = await favouriteArtCollections.find().toArray();
+      res.status(200).send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
