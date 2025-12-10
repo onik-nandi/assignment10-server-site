@@ -40,15 +40,19 @@ async function run() {
 
     // get artwork in backend from db
     app.get("/artWorks",async (req,res)=>{
-        // const result =await artWorksCollection.find().toArray();
-        // res.send(result)
-        const visibility = req.query.visibility; // e.g. ?visibility=public
+       
+        // const visibility = req.query.visibility; 
+        // const category =req.query.category;
+        const {category ,visibility} =req.query
         console.log(visibility)
         const query = {};
 
         if (visibility) {
-          query.Visibility = visibility; // filter only if query exists
+          query.Visibility = visibility;
         }
+         if (category) {
+           query.category = category;
+         }
 
         const result = await artWorksCollection.find(query).toArray();
         res.send(result);
