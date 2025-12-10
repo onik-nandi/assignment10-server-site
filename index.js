@@ -85,7 +85,13 @@ async function run() {
       const result = await artWorksCollection.updateOne(query, updateArt);
       res.send(result);
     });
-
+    // delete form database
+    app.delete("/delete/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await artWorksCollection.deleteOne(query);
+      res.send(result);
+    });
     // only 6 from recent
 
     app.get("/recentArtworks", async (req, res) => {
