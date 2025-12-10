@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const database = client.db("art-works");
     const artWorksCollection = database.collection("art-work");
     const favouriteArtCollections = database.collection("favourite-art");
@@ -145,10 +145,10 @@ async function run() {
       res.send({ success: true, result });
     });
 
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // await client.close();
   }
