@@ -123,6 +123,16 @@ async function run() {
       const result = await favouriteArtCollections.find().toArray();
       res.status(200).send(result);
     });
+    // delete data from fav list
+    app.delete("/delete-favourite/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id)
+      const query = { _id: id };
+      console.log(query);
+      
+      const result = await favouriteArtCollections.deleteOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
