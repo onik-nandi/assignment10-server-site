@@ -39,26 +39,41 @@ async function run() {
     });
 
     // get artwork in backend from db
-    app.get("/artWorks",async (req,res)=>{
-       
-        // const visibility = req.query.visibility; 
-        // const category =req.query.category;
-        const {category ,visibility} =req.query
-        console.log(visibility)
-        const query = {};
+    app.get("/artWorks", async (req, res) => {
+      // const visibility = req.query.visibility;
+      // const category =req.query.category;
+      const { category, visibility } = req.query;
+      console.log(visibility);
+      const query = {};
 
-        if (visibility) {
-          query.Visibility = visibility;
-        }
-         if (category) {
-           query.category = category;
-         }
+      if (visibility) {
+        query.Visibility = visibility;
+      }
+      if (category) {
+        query.category = category;
+      }
 
-        const result = await artWorksCollection.find(query).toArray();
-        res.send(result);
-    })
+      const result = await artWorksCollection.find(query).toArray();
+      res.send(result);
+    });
 
+    // only 6 from recent
 
+    app.get("/recentArtworks", async (req, res) => {
+      const { visibility } = req.query;
+      console.log(visibility);
+      const query = {};
+
+      if (visibility) {
+        query.Visibility = visibility;
+      }
+      const result = await artWorksCollection
+        .find(query)
+        .sort({ createdAt: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
