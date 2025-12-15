@@ -19,7 +19,7 @@ const client = new MongoClient(uri, {
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello Dev");
+  res.send("Hello Dev assignment-10");
 });
 
 async function run() {
@@ -119,8 +119,12 @@ async function run() {
       res.status(201).send(result);
     });
 
-    app.get("/favourites", async (req, res) => {
-      const result = await favouriteArtCollections.find().toArray();
+    app.get("/my-favourites", async (req, res) => {
+      const { userEmail } = req.query;
+      console.log(userEmail);
+
+      const query = { userEmail: userEmail };
+      const result = await favouriteArtCollections.find(query).toArray();
       res.status(200).send(result);
     });
     // delete data from fav list
