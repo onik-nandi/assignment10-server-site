@@ -115,6 +115,13 @@ async function run() {
 
     app.post("/favourites", async (req, res) => {
       const data = req.body;
+      const alreadyExists = await favouriteArtCollections.findOne({
+        userEmail: data.userEmail,
+        artId: data.artId,
+      });
+      if (alreadyExists) {
+        return res.status(400).send({ message: "You already favorited this!" });
+      }
       const result = await favouriteArtCollections.insertOne(data);
       res.status(201).send(result);
     });
@@ -127,11 +134,24 @@ async function run() {
       const result = await favouriteArtCollections.find(query).toArray();
       res.status(200).send(result);
     });
+
+    app.get("/favourites/check", async (req, res) => {
+      const email = req.query.email;
+      const id = req.query.artId;
+      const query = { userEmail: email, artId: id };
+      const existing = await favouriteArtCollections.findOne(query);
+
+      if (existing) {
+        res.send({ isFavourite: true });
+      } else {
+        res.send({ isFavourite: false });
+      }
+    });
     // delete data from fav list
     app.delete("/delete-favourite/:id", async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const query = { _id: id };
+      const query = { _id: new ObjectId(id) };
       console.log(query);
 
       const result = await favouriteArtCollections.deleteOne(query);
